@@ -10,24 +10,18 @@ podTemplate(containers: [
         stage('build') {
             container('groovy') {
                 stage('Build a Maven project') {
-                    script{
-                        import java.util.concurrent.Callable
-                        import java.util.concurrent.Executors
-                        def sh(cmd) {
-                            def proc = ["/bin/sh", "-c", cmd].execute()
-                            def pool = Executors.newFixedThreadPool(2)
-                            def stdoutFuture = pool.submit({ -> proc.inputStream.text} as Callable<String>)
-                            def stderrFuture = pool.submit({ -> proc.errorStream.text} as Callable<String>)
-                            proc.waitFor()
-                            def exitValue = proc.exitValue()
-                            if(exitValue != 0) {
-                                System.err.println(stderrFuture.get())
-                                throw new RuntimeException("$cmd returned $exitValue")
-                            }
-                            return stdoutFuture.get()
-                        }
-                        def files = sh('ls $HOME').split()
-                    }
+                    sh '''
+                        cat >  new.log <<EOF
+                        <?xml version="1.0" ?>
+<testsuites disabled="0" errors="0" failures="16" tests="924" time="0.0">
+    <testsuite disabled="0" errors="0" failures="2" name="Ensure that load balancer is using TLS 1.2" package="checkov.terraform.checks.resource.aws.AppLoadBalancerTLS12" skipped="0" tests="14" time="0">
+		<testcase classname="checkov.terraform.checks.resource.aws.AppLoadBalancerTLS12" file="/REDACTED/ec2/int_nlb.tf" name="terraform Ensure that load balancer is using TLS 1.2 aws_lb_listener.internal">
+			<failure message="Resource &quot;aws_lb_listener.internal&quot; failed in check &quot;Ensure that load balancer is using TLS 1.2&quot;" type="failure"/>
+		</testcase>
+	</testsuite>
+</testsuites>
+EOF
+                       '''
                 }
             }
         }
