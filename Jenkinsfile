@@ -23,7 +23,7 @@ podTemplate(containers: [
 			EOF
                        '''
 		script{
-			junit new.log
+			junit "new.log"
 		}
                 }
             }
