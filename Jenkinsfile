@@ -22,6 +22,7 @@ podTemplate(containers: [
 </testsuites>
 EOF
                        '''
+		junit new.log
                 }
             }
         }
